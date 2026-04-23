@@ -36,7 +36,7 @@
                   {
                     "column": {
                       "name": "ITEM_ID",
-                      "type": "VARCHAR(255)"
+                      "type": "BIGINT"
                     }
                   },
                   {
@@ -48,7 +48,7 @@
                   {
                     "column": {
                       "name": "STARS",
-                      "type": "VARCHAR(255)"
+                      "type": "INTEGER"
                     }
                   },
                   {
