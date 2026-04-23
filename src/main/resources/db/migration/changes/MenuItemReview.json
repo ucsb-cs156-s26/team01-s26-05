@@ -54,7 +54,7 @@
                   {
                     "column": {
                       "name": "DATE_REVIEWED",
-                      "type": "VARCHAR(255)"
+                      "type": "TIMESTAMP"
                     }
                   },
                                     {
