@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +57,13 @@ public class HelpRequestController extends ApiController {
       @Parameter(name = "requesterEmail") @RequestParam String requesterEmail,
       @Parameter(name = "teamId") @RequestParam String teamId,
       @Parameter(name = "tableOrBreakoutRoom") @RequestParam String tableOrBreakoutRoom,
-      @Parameter(name = "requestTime") @RequestParam LocalDateTime requestTime,
+      @Parameter(
+              name = "requestTime",
+              description =
+                  "date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)")
+          @RequestParam("requestTime")
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime requestTime,
       @Parameter(name = "explanation") @RequestParam String explanation,
       @Parameter(name = "solved") @RequestParam boolean solved)
       throws JsonProcessingException {
