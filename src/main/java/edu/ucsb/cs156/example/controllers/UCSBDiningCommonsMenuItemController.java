@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** This is a REST controller for UCSBDiningCommonsMenuItem */
 @Tag(name = "UCSBDiningCommonsMenuItem")
-@RequestMapping("/api/UCSBDiningCommonsMenuItem")
+@RequestMapping("/api/ucsbdiningcommonsmenuitem")
 @RestController
 @Slf4j
 public class UCSBDiningCommonsMenuItemController extends ApiController {
@@ -29,9 +29,9 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   @Autowired UCSBDiningCommonsMenuItemRepository ucsbDiningCommonsMenuItemRepository;
 
   /**
-   * This method returns a list of all UCSBDiningCommonsMenuItems.
+   * List all UCSB dining commons menu items.
    *
-   * @return a list of all UCSBDiningCommonsMenuItems
+   * @return an iterable of UCSBDiningCommonsMenuItem
    */
   @Operation(summary = "List all UCSB dining commons menu items")
   @PreAuthorize("hasRole('ROLE_USER')")
@@ -42,28 +42,26 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   }
 
   /**
-   * This method returns a single UCSBDiningCommonsMenuItem by its code.
+   * Get a single menu item by id.
    *
-   * @param code code of the menu item
-   * @return the matching UCSBDiningCommonsMenuItem
+   * @param id the id of the menu item
+   * @return a UCSBDiningCommonsMenuItem
    */
   @Operation(summary = "Get a single UCSB dining commons menu item")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("")
-  public UCSBDiningCommonsMenuItem getById(@Parameter(name = "code") @RequestParam String code) {
+  public UCSBDiningCommonsMenuItem getById(@Parameter(name = "id") @RequestParam Long id) {
     UCSBDiningCommonsMenuItem item =
         ucsbDiningCommonsMenuItemRepository
-            .findById(code)
-            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, code));
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
 
     return item;
   }
 
   /**
-   * This method creates a new UCSBDiningCommonsMenuItem. Accessible only to users with the role
-   * "ROLE_ADMIN".
+   * Create a new UCSB dining commons menu item.
    *
-   * @param code unique code identifying the menu item
    * @param diningCommonsCode code for the dining commons that serves the item
    * @param name name of the menu item
    * @param station the station within the dining commons where the item is served
@@ -73,13 +71,11 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
   public UCSBDiningCommonsMenuItem postMenuItem(
-      @Parameter(name = "code") @RequestParam String code,
       @Parameter(name = "diningCommonsCode") @RequestParam String diningCommonsCode,
       @Parameter(name = "name") @RequestParam String name,
       @Parameter(name = "station") @RequestParam String station) {
 
     UCSBDiningCommonsMenuItem item = new UCSBDiningCommonsMenuItem();
-    item.setCode(code);
     item.setDiningCommonsCode(diningCommonsCode);
     item.setName(name);
     item.setStation(station);
@@ -90,9 +86,28 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   }
 
   /**
-   * Update a single UCSBDiningCommonsMenuItem. Accessible only to users with the role "ROLE_ADMIN".
+   * Delete a UCSBDiningCommonsMenuItem.
    *
-   * @param code code of the menu item to update
+   * @param id the id of the menu item to delete
+   * @return a message indicating the menu item was deleted
+   */
+  @Operation(summary = "Delete a UCSBDiningCommonsMenuItem")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @DeleteMapping("")
+  public Object deleteMenuItem(@Parameter(name = "id") @RequestParam Long id) {
+    UCSBDiningCommonsMenuItem item =
+        ucsbDiningCommonsMenuItemRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
+
+    ucsbDiningCommonsMenuItemRepository.delete(item);
+    return genericMessage("UCSBDiningCommonsMenuItem with id %s deleted".formatted(id));
+  }
+
+  /**
+   * Update a single UCSBDiningCommonsMenuItem.
+   *
+   * @param id id of the menu item to update
    * @param incoming the new menu item contents
    * @return the updated menu item
    */
@@ -100,13 +115,13 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PutMapping("")
   public UCSBDiningCommonsMenuItem updateMenuItem(
-      @Parameter(name = "code") @RequestParam String code,
+      @Parameter(name = "id") @RequestParam Long id,
       @RequestBody @Valid UCSBDiningCommonsMenuItem incoming) {
 
     UCSBDiningCommonsMenuItem item =
         ucsbDiningCommonsMenuItemRepository
-            .findById(code)
-            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, code));
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
 
     item.setDiningCommonsCode(incoming.getDiningCommonsCode());
     item.setName(incoming.getName());
@@ -115,24 +130,5 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
     ucsbDiningCommonsMenuItemRepository.save(item);
 
     return item;
-  }
-
-  /**
-   * Delete a UCSBDiningCommonsMenuItem. Accessible only to users with the role "ROLE_ADMIN".
-   *
-   * @param code code of the menu item to delete
-   * @return a message indicating the menu item was deleted
-   */
-  @Operation(summary = "Delete a UCSBDiningCommonsMenuItem")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @DeleteMapping("")
-  public Object deleteMenuItem(@Parameter(name = "code") @RequestParam String code) {
-    UCSBDiningCommonsMenuItem item =
-        ucsbDiningCommonsMenuItemRepository
-            .findById(code)
-            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, code));
-
-    ucsbDiningCommonsMenuItemRepository.delete(item);
-    return genericMessage("UCSBDiningCommonsMenuItem with id %s deleted".formatted(code));
   }
 }
