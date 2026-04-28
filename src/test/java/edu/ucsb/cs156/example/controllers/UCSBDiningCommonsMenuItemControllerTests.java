@@ -16,6 +16,8 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -84,6 +86,71 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     String expectedJson = mapper.writeValueAsString(expectedItems);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  // Tests for GET /api/UCSBDiningCommonsMenuItem?code=...
+
+  @Test
+  public void logged_out_users_cannot_get_by_id() throws Exception {
+    mockMvc
+        .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA"))
+        .andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+    // arrange
+
+    UCSBDiningCommonsMenuItem item =
+        UCSBDiningCommonsMenuItem.builder()
+            .code("BPPC-ORTEGA")
+            .diningCommonsCode("ortega")
+            .name("Baked Pesto Pasta with Chicken")
+            .station("Entree Specials")
+            .build();
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq("BPPC-ORTEGA")))
+        .thenReturn(Optional.of(item));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq("BPPC-ORTEGA"));
+    String expectedJson = mapper.writeValueAsString(item);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+
+    // arrange
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq("nope-ortega")))
+        .thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "nope-ortega"))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq("nope-ortega"));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("UCSBDiningCommonsMenuItem with id nope-ortega not found", json.get("message"));
   }
 
   // Tests for POST /api/UCSBDiningCommonsMenuItem/post
