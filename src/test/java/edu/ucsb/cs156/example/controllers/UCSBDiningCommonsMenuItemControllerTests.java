@@ -35,17 +35,17 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @MockitoBean UserRepository userRepository;
 
-  // Tests for GET /api/UCSBDiningCommonsMenuItem/all
+  // Tests for GET /api/ucsbdiningcommonsmenuitem/all
 
   @Test
   public void logged_out_users_cannot_get_all() throws Exception {
-    mockMvc.perform(get("/api/UCSBDiningCommonsMenuItem/all")).andExpect(status().is(403));
+    mockMvc.perform(get("/api/ucsbdiningcommonsmenuitem/all")).andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_users_can_get_all() throws Exception {
-    mockMvc.perform(get("/api/UCSBDiningCommonsMenuItem/all")).andExpect(status().is(200));
+    mockMvc.perform(get("/api/ucsbdiningcommonsmenuitem/all")).andExpect(status().is(200));
   }
 
   @WithMockUser(roles = {"USER"})
@@ -54,31 +54,29 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     // arrange
 
-    UCSBDiningCommonsMenuItem baked_pesto_pasta_with_chicken =
+    UCSBDiningCommonsMenuItem item1 =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Baked Pesto Pasta with Chicken")
             .station("Entree Specials")
             .build();
 
-    UCSBDiningCommonsMenuItem tofu_banh_mi_sandwich =
+    UCSBDiningCommonsMenuItem item2 =
         UCSBDiningCommonsMenuItem.builder()
-            .code("TBMS-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Tofu Banh Mi Sandwich (v)")
             .station("Entree Specials")
             .build();
 
     ArrayList<UCSBDiningCommonsMenuItem> expectedItems = new ArrayList<>();
-    expectedItems.addAll(Arrays.asList(baked_pesto_pasta_with_chicken, tofu_banh_mi_sandwich));
+    expectedItems.addAll(Arrays.asList(item1, item2));
 
     when(ucsbDiningCommonsMenuItemRepository.findAll()).thenReturn(expectedItems);
 
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/UCSBDiningCommonsMenuItem/all"))
+            .perform(get("/api/ucsbdiningcommonsmenuitem/all"))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -90,12 +88,12 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     assertEquals(expectedJson, responseString);
   }
 
-  // Tests for GET /api/UCSBDiningCommonsMenuItem?code=...
+  // Tests for GET /api/ucsbdiningcommonsmenuitem?id=...
 
   @Test
   public void logged_out_users_cannot_get_by_id() throws Exception {
     mockMvc
-        .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA"))
+        .perform(get("/api/ucsbdiningcommonsmenuitem").param("id", "7"))
         .andExpect(status().is(403));
   }
 
@@ -107,25 +105,23 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem item =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Baked Pesto Pasta with Chicken")
             .station("Entree Specials")
             .build();
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("BPPC-ORTEGA")))
-        .thenReturn(Optional.of(item));
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.of(item));
 
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA"))
+            .perform(get("/api/ucsbdiningcommonsmenuitem").param("id", "7"))
             .andExpect(status().isOk())
             .andReturn();
 
     // assert
 
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq("BPPC-ORTEGA"));
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(7L));
     String expectedJson = mapper.writeValueAsString(item);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
@@ -137,32 +133,30 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     // arrange
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("nope-ortega")))
-        .thenReturn(Optional.empty());
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.empty());
 
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/UCSBDiningCommonsMenuItem").param("code", "nope-ortega"))
+            .perform(get("/api/ucsbdiningcommonsmenuitem").param("id", "7"))
             .andExpect(status().isNotFound())
             .andReturn();
 
     // assert
 
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq("nope-ortega"));
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(7L));
     Map<String, Object> json = responseToJson(response);
     assertEquals("EntityNotFoundException", json.get("type"));
-    assertEquals("UCSBDiningCommonsMenuItem with id nope-ortega not found", json.get("message"));
+    assertEquals("UCSBDiningCommonsMenuItem with id 7 not found", json.get("message"));
   }
 
-  // Tests for POST /api/UCSBDiningCommonsMenuItem/post
+  // Tests for POST /api/ucsbdiningcommonsmenuitem/post
 
   @Test
   public void logged_out_users_cannot_post() throws Exception {
     mockMvc
         .perform(
-            post("/api/UCSBDiningCommonsMenuItem/post")
-                .param("code", "BPPC-ORTEGA")
+            post("/api/ucsbdiningcommonsmenuitem/post")
                 .param("diningCommonsCode", "ortega")
                 .param("name", "Baked Pesto Pasta with Chicken")
                 .param("station", "Entree Specials")
@@ -175,8 +169,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
   public void logged_in_regular_users_cannot_post() throws Exception {
     mockMvc
         .perform(
-            post("/api/UCSBDiningCommonsMenuItem/post")
-                .param("code", "BPPC-ORTEGA")
+            post("/api/ucsbdiningcommonsmenuitem/post")
                 .param("diningCommonsCode", "ortega")
                 .param("name", "Baked Pesto Pasta with Chicken")
                 .param("station", "Entree Specials")
@@ -191,7 +184,6 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem item =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Baked Pesto Pasta with Chicken")
             .station("Entree Specials")
@@ -203,8 +195,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/UCSBDiningCommonsMenuItem/post")
-                    .param("code", "BPPC-ORTEGA")
+                post("/api/ucsbdiningcommonsmenuitem/post")
                     .param("diningCommonsCode", "ortega")
                     .param("name", "Baked Pesto Pasta with Chicken")
                     .param("station", "Entree Specials")
@@ -219,7 +210,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     assertEquals(expectedJson, responseString);
   }
 
-  // Tests for PUT /api/UCSBDiningCommonsMenuItem?code=...
+  // Tests for PUT /api/ucsbdiningcommonsmenuitem?id=...
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
@@ -228,7 +219,6 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem original =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Baked Pesto Pasta with Chicken")
             .station("Entree Specials")
@@ -236,7 +226,6 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem edited =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("portola")
             .name("Baked Pesto Pasta")
             .station("Greens & Grains")
@@ -244,15 +233,14 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     String requestBody = mapper.writeValueAsString(edited);
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("BPPC-ORTEGA")))
-        .thenReturn(Optional.of(original));
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.of(original));
 
     // act
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/UCSBDiningCommonsMenuItem")
-                    .param("code", "BPPC-ORTEGA")
+                put("/api/ucsbdiningcommonsmenuitem")
+                    .param("id", "7")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)
@@ -261,7 +249,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
             .andReturn();
 
     // assert
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("BPPC-ORTEGA");
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(7L);
     verify(ucsbDiningCommonsMenuItemRepository, times(1)).save(edited);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(requestBody, responseString);
@@ -274,7 +262,6 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem editedItem =
         UCSBDiningCommonsMenuItem.builder()
-            .code("nope-ortega")
             .diningCommonsCode("ortega")
             .name("Imaginary Item")
             .station("Nowhere")
@@ -282,15 +269,14 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     String requestBody = mapper.writeValueAsString(editedItem);
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("nope-ortega")))
-        .thenReturn(Optional.empty());
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.empty());
 
     // act
     MvcResult response =
         mockMvc
             .perform(
-                put("/api/UCSBDiningCommonsMenuItem")
-                    .param("code", "nope-ortega")
+                put("/api/ucsbdiningcommonsmenuitem")
+                    .param("id", "7")
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("utf-8")
                     .content(requestBody)
@@ -299,12 +285,12 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
             .andReturn();
 
     // assert
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("nope-ortega");
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(7L);
     Map<String, Object> json = responseToJson(response);
-    assertEquals("UCSBDiningCommonsMenuItem with id nope-ortega not found", json.get("message"));
+    assertEquals("UCSBDiningCommonsMenuItem with id 7 not found", json.get("message"));
   }
 
-  // Tests for DELETE /api/UCSBDiningCommonsMenuItem?code=...
+  // Tests for DELETE /api/ucsbdiningcommonsmenuitem?id=...
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
@@ -313,29 +299,26 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem item =
         UCSBDiningCommonsMenuItem.builder()
-            .code("BPPC-ORTEGA")
             .diningCommonsCode("ortega")
             .name("Baked Pesto Pasta with Chicken")
             .station("Entree Specials")
             .build();
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("BPPC-ORTEGA")))
-        .thenReturn(Optional.of(item));
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.of(item));
 
     // act
     MvcResult response =
         mockMvc
-            .perform(
-                delete("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA").with(csrf()))
+            .perform(delete("/api/ucsbdiningcommonsmenuitem").param("id", "7").with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
 
     // assert
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("BPPC-ORTEGA");
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(7L);
     verify(ucsbDiningCommonsMenuItemRepository, times(1)).delete(any());
 
     Map<String, Object> json = responseToJson(response);
-    assertEquals("UCSBDiningCommonsMenuItem with id BPPC-ORTEGA deleted", json.get("message"));
+    assertEquals("UCSBDiningCommonsMenuItem with id 7 deleted", json.get("message"));
   }
 
   @WithMockUser(roles = {"ADMIN", "USER"})
@@ -344,20 +327,18 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
       throws Exception {
     // arrange
 
-    when(ucsbDiningCommonsMenuItemRepository.findById(eq("nope-ortega")))
-        .thenReturn(Optional.empty());
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.empty());
 
     // act
     MvcResult response =
         mockMvc
-            .perform(
-                delete("/api/UCSBDiningCommonsMenuItem").param("code", "nope-ortega").with(csrf()))
+            .perform(delete("/api/ucsbdiningcommonsmenuitem").param("id", "7").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
     // assert
-    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("nope-ortega");
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(7L);
     Map<String, Object> json = responseToJson(response);
-    assertEquals("UCSBDiningCommonsMenuItem with id nope-ortega not found", json.get("message"));
+    assertEquals("UCSBDiningCommonsMenuItem with id 7 not found", json.get("message"));
   }
 }
