@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
@@ -215,5 +216,91 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     String expectedJson = mapper.writeValueAsString(helpRequest);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_helprequest() throws Exception {
+
+    LocalDateTime rt1 = LocalDateTime.parse("2022-04-20T17:35:00");
+    LocalDateTime rt2 = LocalDateTime.parse("2023-04-20T18:31:00");
+
+    HelpRequest helpRequestOrig =
+        HelpRequest.builder()
+            .requesterEmail("cgaucho@ucsb.edu")
+            .teamId("s22-5pm-3")
+            .tableOrBreakoutRoom("7")
+            .requestTime(rt1)
+            .explanation("Need help with Swagger-ui")
+            .solved(false)
+            .build();
+
+    HelpRequest helpRequestEdited =
+        HelpRequest.builder()
+            .requesterEmail("ldelplaya@ucsb.edu")
+            .teamId("s22-6pm-3")
+            .tableOrBreakoutRoom("11")
+            .requestTime(rt2)
+            .explanation("Dokku problems")
+            .solved(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(helpRequestEdited);
+
+    when(helpRequestRepository.findById(eq(67L))).thenReturn(Optional.of(helpRequestOrig));
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/helprequests")
+                    .param("id", "67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(67L);
+    verify(helpRequestRepository, times(1)).save(helpRequestEdited);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_helprequest_that_does_not_exist() throws Exception {
+
+    LocalDateTime rt = LocalDateTime.parse("2022-04-20T17:35:00");
+
+    HelpRequest helpRequestEdited =
+        HelpRequest.builder()
+            .requesterEmail("cgaucho@ucsb.edu")
+            .teamId("s22-5pm-3")
+            .tableOrBreakoutRoom("7")
+            .requestTime(rt)
+            .explanation("Need help with Swagger-ui")
+            .solved(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(helpRequestEdited);
+
+    when(helpRequestRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/helprequests")
+                    .param("id", "67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("HelpRequest with id 67 not found", json.get("message"));
   }
 }
