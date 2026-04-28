@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-05
 owner: ucsb-cs156-s26
 repo_name: team01-s26-05
-pull_requests: [{"author":{"id":"MDQ6VXNlcjU0NTE5MDAw","is_bot":false,"login":"jdelpego","name":"Joaquin Del Pego"},"headRefName":"team01-s26-05-12","number":64,"title":"Add DELETE endpoint to UCSBDiningCommonsMenuItemController","url":"https://github.com/ucsb-cs156-s26/team01-s26-05/pull/64"},{"author":{"id":"MDQ6VXNlcjU0NTE5MDAw","is_bot":false,"login":"jdelpego","name":"Joaquin Del Pego"},"headRefName":"team01-s26-05-11","number":63,"title":"Add PUT endpoint to UCSBDiningCommonsMenuItemController","url":"https://github.com/ucsb-cs156-s26/team01-s26-05/pull/63"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjU0NTE5MDAw","is_bot":false,"login":"jdelpego","name":"Joaquin Del Pego"},"headRefName":"team01-s26-05-12","number":64,"title":"Add DELETE endpoint to UCSBDiningCommonsMenuItemController","url":"https://github.com/ucsb-cs156-s26/team01-s26-05/pull/64"}]
