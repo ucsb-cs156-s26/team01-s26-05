@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "ucsbdiningcommonsMenuItem")
+@Entity(name = "ucsbdiningcommonsmenuitem")
 public class UCSBDiningCommonsMenuItem {
   @Id private String code;
   private String diningCommonsCode;
