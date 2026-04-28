@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -294,6 +295,63 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
                     .characterEncoding("utf-8")
                     .content(requestBody)
                     .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("nope-ortega");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBDiningCommonsMenuItem with id nope-ortega not found", json.get("message"));
+  }
+
+  // Tests for DELETE /api/UCSBDiningCommonsMenuItem?code=...
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_menu_item() throws Exception {
+    // arrange
+
+    UCSBDiningCommonsMenuItem item =
+        UCSBDiningCommonsMenuItem.builder()
+            .code("BPPC-ORTEGA")
+            .diningCommonsCode("ortega")
+            .name("Baked Pesto Pasta with Chicken")
+            .station("Entree Specials")
+            .build();
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq("BPPC-ORTEGA")))
+        .thenReturn(Optional.of(item));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                delete("/api/UCSBDiningCommonsMenuItem").param("code", "BPPC-ORTEGA").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById("BPPC-ORTEGA");
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).delete(any());
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBDiningCommonsMenuItem with id BPPC-ORTEGA deleted", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_tries_to_delete_non_existant_menu_item_and_gets_right_error_message()
+      throws Exception {
+    // arrange
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq("nope-ortega")))
+        .thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                delete("/api/UCSBDiningCommonsMenuItem").param("code", "nope-ortega").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
