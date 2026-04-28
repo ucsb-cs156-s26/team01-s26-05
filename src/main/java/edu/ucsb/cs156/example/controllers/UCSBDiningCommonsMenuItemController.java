@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -114,5 +115,24 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
     ucsbDiningCommonsMenuItemRepository.save(item);
 
     return item;
+  }
+
+  /**
+   * Delete a UCSBDiningCommonsMenuItem. Accessible only to users with the role "ROLE_ADMIN".
+   *
+   * @param code code of the menu item to delete
+   * @return a message indicating the menu item was deleted
+   */
+  @Operation(summary = "Delete a UCSBDiningCommonsMenuItem")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @DeleteMapping("")
+  public Object deleteMenuItem(@Parameter(name = "code") @RequestParam String code) {
+    UCSBDiningCommonsMenuItem item =
+        ucsbDiningCommonsMenuItemRepository
+            .findById(code)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, code));
+
+    ucsbDiningCommonsMenuItemRepository.delete(item);
+    return genericMessage("UCSBDiningCommonsMenuItem with id %s deleted".formatted(code));
   }
 }
