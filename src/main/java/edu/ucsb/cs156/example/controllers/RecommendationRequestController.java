@@ -2,7 +2,6 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
-import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -158,9 +157,9 @@ public class RecommendationRequestController extends ApiController {
     RecommendationRequest recommendationRequest =
         recommendationRequestRepository
             .findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(UCSBDate.class, id));
+            .orElseThrow(() -> new EntityNotFoundException(RecommendationRequest.class, id));
 
     recommendationRequestRepository.delete(recommendationRequest);
-    return genericMessage("UCSBDate with id %s deleted".formatted(id));
+    return genericMessage("RecommendationRequest with id %s deleted".formatted(id));
   }
 }
