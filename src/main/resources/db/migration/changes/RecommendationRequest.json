@@ -2,8 +2,8 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "UCSBDates-1",
-          "author": "YourGitHubID",
+          "id": "RecommendationRequest-1",
+          "author": "katskt",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
