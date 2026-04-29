@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "RECOMMENDATIONREQUESTS"
+                    "tableName": "RECOMMENDATION_REQUESTS"
                   }
                 }
               ]
@@ -27,7 +27,7 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "RECOMMENDATIONREQUEST_PK"
+                        "primaryKeyName": "RECOMMENDATION_REQUEST_PK"
                       },
                       "name": "ID",
                       "type": "BIGINT"
@@ -70,7 +70,7 @@
                     }
                   }
                 ],
-                "tableName": "RECOMMENDATIONREQUESTS"
+                "tableName": "RECOMMENDATION_REQUESTS"
               }
             }
           ]
