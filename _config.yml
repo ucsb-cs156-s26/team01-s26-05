@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-05
 owner: ucsb-cs156-s26
 repo_name: team01-s26-05
-pull_requests: []
+pull_requests: [{"author":{"id":"U_kgDOCx52uQ","is_bot":false,"login":"alexiasargsyan","name":"Alexia Sargsyan"},"headRefName":"UCSBOrganization-db-alexiasargsyan","number":68,"title":"feat: Create database table for UCSBOrganization","url":"https://github.com/ucsb-cs156-s26/team01-s26-05/pull/68"}]
