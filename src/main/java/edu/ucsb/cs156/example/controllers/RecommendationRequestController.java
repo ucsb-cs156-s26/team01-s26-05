@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /* This is a REST controller for RecommendationRequests */
 @Tag(name = "RecommendationRequests")
-@RequestMapping("/api/recommendationRequests")
+@RequestMapping("/api/recommendationRequest")
 @RestController
 @Slf4j
 public class RecommendationRequestController extends ApiController {

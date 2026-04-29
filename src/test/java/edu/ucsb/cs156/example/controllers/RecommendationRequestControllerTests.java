@@ -34,21 +34,21 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
   @Test
   public void logged_out_users_cannot_get_all() throws Exception {
     mockMvc
-        .perform(get("/api/recommendationRequests/all"))
+        .perform(get("/api/recommendationRequest/all"))
         .andExpect(status().is(403)); // logged out users can't get all
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_users_can_get_all() throws Exception {
-    mockMvc.perform(get("/api/recommendationRequests/all")).andExpect(status().is(200)); // logged
+    mockMvc.perform(get("/api/recommendationRequest/all")).andExpect(status().is(200)); // logged
   }
 
   @Test
   public void logged_out_users_cannot_post() throws Exception {
     mockMvc
         .perform(
-            post("/api/recommendationRequests/post")
+            post("/api/recommendationRequest/post")
                 .param("professorEmail", "kyle@ucsb.edu")
                 .param("requesterEmail", "reighligh@ucsb.edu")
                 .param("dateNeeded", "2022-02-03T00:00:00")
@@ -64,7 +64,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
   public void logged_in_regular_users_cannot_post() throws Exception {
     mockMvc
         .perform(
-            post("/api/recommendationRequests/post")
+            post("/api/recommendationRequest/post")
                 .param("professorEmail", "koyhle@ucsb.edu")
                 .param("requesterEmail", "keighty@ucsb.edu")
                 .param("dateNeeded", "2023-02-03T00:00:00")
@@ -101,7 +101,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/recommendationRequests/all"))
+            .perform(get("/api/recommendationRequest/all"))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -145,7 +145,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/recommendationRequests/post?explanation=PHD&requesterEmail=kats@ucsb&professorEmail=jane@ucsb&dateNeeded=2023-04-03T00:00:00&dateRequested=2023-08-11T00:00:00&done=true")
+                post("/api/recommendationRequest/post?explanation=PHD&requesterEmail=kats@ucsb&professorEmail=jane@ucsb&dateNeeded=2023-04-03T00:00:00&dateRequested=2023-08-11T00:00:00&done=true")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
