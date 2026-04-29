@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "RECOMMENDATIONREQUEST"
+                    "tableName": "RECOMMENDATIONREQUESTS"
                   }
                 }
               ]
@@ -70,7 +70,7 @@
                     }
                   }
                 ],
-                "tableName": "RECOMMENDATIONREQUEST"
+                "tableName": "RECOMMENDATIONREQUESTS"
               }
             }
           ]
