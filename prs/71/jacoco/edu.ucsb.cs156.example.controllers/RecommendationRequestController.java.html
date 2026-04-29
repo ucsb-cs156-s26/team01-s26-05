@@ -98,7 +98,7 @@ import org.springframework.web.bind.annotation.RestController;
    * @param id the id of the recommendation request
    * @return a RecommendationRequest
    */
-  @Operation(summary = &quot;Get a single recommendation request&quot;)
+  @Operation(summary = &quot;Get a single date&quot;)
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;&quot;)
   public RecommendationRequest getById(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
