@@ -98,7 +98,7 @@ public class RecommendationRequestController extends ApiController {
    * @param id the id of the recommendation request
    * @return a RecommendationRequest
    */
-  @Operation(summary = "Get a single date")
+  @Operation(summary = "Get a single recommendation request")
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("")
   public RecommendationRequest getById(@Parameter(name = "id") @RequestParam Long id) {
