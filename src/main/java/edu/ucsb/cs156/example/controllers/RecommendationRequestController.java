@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.entities.UCSBDate;
 import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -141,5 +143,24 @@ public class RecommendationRequestController extends ApiController {
     recommendationRequestRepository.save(recommendationRequest);
 
     return recommendationRequest;
+  }
+
+  /**
+   * Delete a Recommendation Request
+   *
+   * @param id the id of the recommendation request to delete
+   * @return a message indicating the recommendation request was deleted
+   */
+  @Operation(summary = "Delete a Recommendation Request")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @DeleteMapping("")
+  public Object deleteRecommendationRequest(@Parameter(name = "id") @RequestParam Long id) {
+    RecommendationRequest recommendationRequest =
+        recommendationRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDate.class, id));
+
+    recommendationRequestRepository.delete(recommendationRequest);
+    return genericMessage("UCSBDate with id %s deleted".formatted(id));
   }
 }
