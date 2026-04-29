@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /* This is a REST controller for RecommendationRequests */
-@Tag(name = "RecommendationRequest")
-@RequestMapping("/api/recommendationRequest")
+@Tag(name = "RecommendationRequests")
+@RequestMapping("/api/recommendationRequests")
 @RestController
 @Slf4j
 public class RecommendationRequestController extends ApiController {
   @Autowired RecommendationRequestRepository recommendationRequestRepository;
 
   /**
-   * THis method returns a list of all Recommendation requests.
+   * This method returns a list of all Recommendation requests.
    *
    * @return List all recommendation dates
    */
